@@ -5,13 +5,13 @@ import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.toUserModel
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.Daos.UserDao
 import com.mertkaragul.noteappcleanarchitecture.Domain.Model.UserModel
 import com.mertkaragul.noteappcleanarchitecture.Domain.Repo.IUserRepo
-import java.time.format.DateTimeFormatter
+import java.time.Instant
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
 class UserImpl @Inject constructor(
-    val userDao: UserDao
+    private val userDao: UserDao
 ) : IUserRepo{
     override suspend fun getAll(): UserModel {
         return userDao.getAll().toUserModel()
@@ -27,8 +27,8 @@ class UserImpl @Inject constructor(
                 userModelDto.name,
                 userModelDto.surname,
                 userModelDto.image,
-                Calendar.getInstance().time.toString(),
-                Calendar.getInstance().time.toString()
+                "",
+                ""
             )
         )
     }

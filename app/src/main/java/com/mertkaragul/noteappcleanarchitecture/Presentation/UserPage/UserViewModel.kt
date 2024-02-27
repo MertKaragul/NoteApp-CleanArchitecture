@@ -5,6 +5,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertkaragul.noteappcleanarchitecture.Common.Resource
+import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.UserModelDto
+import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.toUserModel
+import com.mertkaragul.noteappcleanarchitecture.Domain.Model.UserModel
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.UserUseCase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -14,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    val userUseCase: UserUseCase
+    private val userUseCase: UserUseCase
 ) : ViewModel() {
     private val _state = mutableStateOf<UserState>(UserState())
     val state = _state
