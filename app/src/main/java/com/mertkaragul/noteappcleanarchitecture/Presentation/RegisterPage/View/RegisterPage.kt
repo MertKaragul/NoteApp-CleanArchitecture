@@ -34,6 +34,7 @@ import com.mertkaragul.noteappcleanarchitecture.Presentation.RegisterPage.Regist
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Widgets.ImageCircleWidget
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Widgets.NoteButtonWidget
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Widgets.TextFieldWidgetOutline
+import java.time.LocalDateTime
 
 @Composable
 fun RegisterPage(
@@ -53,8 +54,6 @@ fun RegisterPage(
 
     val width = LocalConfiguration.current.screenWidthDp
     val height = LocalConfiguration.current.screenHeightDp
-
-    if(!state.value.data.isNullOrEmpty()) rememberNavController.navigate("checkUser")
 
      Column(
          modifier = Modifier.fillMaxSize(),
@@ -107,7 +106,7 @@ fun RegisterPage(
              onClick = {
                 // register user
                 viewModel.onEvent(
-                    RegisterEvent.RegisterUser(UserModel(name,surname,imageSelectedUri.toString()))
+                    RegisterEvent.RegisterUser(UserModel(0,name,surname,imageSelectedUri.toString(),LocalDateTime.now().toString(),LocalDateTime.now().toString()))
                 )
              },
              modifier = Modifier
@@ -122,4 +121,6 @@ fun RegisterPage(
     LaunchedEffect(key1 = selectImage){
         if (selectImage) launcher.launch(PickVisualMediaRequest())
     }
+
+    if(state.value.data != null) rememberNavController.navigate("checkUser")
 }

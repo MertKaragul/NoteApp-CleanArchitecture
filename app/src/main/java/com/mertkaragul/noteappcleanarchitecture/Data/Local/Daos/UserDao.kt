@@ -6,18 +6,19 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.UserModelDto
+import com.mertkaragul.noteappcleanarchitecture.Domain.Model.UserModel
 
 
 @Dao
 interface UserDao {
-    @Query("SELECT * FROM NoteModelDto")
-    suspend fun getAll() : UserModelDto
-    @Query("SELECT * FROM NoteModelDto WHERE id LIKE :id")
-    suspend fun findUserById(id : Int) : UserModelDto
+    @Query("SELECT * FROM UserModel")
+    suspend fun getAll() : List<UserModel>
+    @Query("SELECT * FROM UserModel WHERE id LIKE :id")
+    suspend fun findUserById(id : Int) : UserModel
     @Insert
-    suspend fun insert(userModelDto: UserModelDto)
+    suspend fun insert(userModel: UserModel)
     @Update
-    suspend fun update(userModelDto: UserModelDto)
+    suspend fun update(userModel: UserModel)
     @Delete
-    suspend fun delete(userModelDto: UserModelDto)
+    suspend fun delete(userModel: UserModel)
 }

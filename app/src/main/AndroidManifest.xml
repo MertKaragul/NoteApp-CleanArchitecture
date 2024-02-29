@@ -11,10 +11,11 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:enableOnBackInvokedCallback="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NoteAppCleanArchitecture"
-        tools:targetApi="31">
+        tools:targetApi="UPSIDE_DOWN_CAKE">
         <activity
             android:name=".Presentation.MainActivity"
             android:exported="true"

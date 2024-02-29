@@ -1,14 +1,10 @@
 package com.mertkaragul.noteappcleanarchitecture.Presentation.UserPage
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertkaragul.noteappcleanarchitecture.Common.Resource
-import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.UserModelDto
-import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.toUserModel
-import com.mertkaragul.noteappcleanarchitecture.Domain.Model.UserModel
-import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.UserUseCase.UserUseCase
+import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.UserUseCase.GetUserUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -17,46 +13,44 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userUseCase: UserUseCase
+    private val userUseCase: GetUserUserCase
 ) : ViewModel() {
     private val _state = mutableStateOf<UserState>(UserState())
     val state = _state
 
-    init {
-        getUser()
-    }
-
     private fun getUser(){
-        userUseCase.getUser().onEach {
+        userUseCase.invoke()
+            .onEach {
             when(it){
-                is Resource.Error -> {
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        error = it.error ?: "Something went wrong"
-                    )
-                }
-
-                is Resource.Success -> {
-                    if(_state.value.data == null){
-                        _state.value = _state.value.copy(
-                            isLoading = false,
-                            error = "User not found"
-                        )
-                    }else{
-                        _state.value = _state.value.copy(
-                            data = it.data,
-                            isLoading = false
-                        )
-                    }
-                }
-
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
                         isLoading = true
                     )
                 }
 
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        data = it.data,
+                        isLoading = false
+                    )
+                }
+
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        error = it.error ?: "Something went wrong"
+                    )
+                }
             }
         }.launchIn(viewModelScope)
     }
+
+    fun onEvent(userEvent: UserEvent){
+        when(userEvent){
+            is UserEvent.GetUser -> {
+                getUser()
+            }
+        }
+    }
+
 }

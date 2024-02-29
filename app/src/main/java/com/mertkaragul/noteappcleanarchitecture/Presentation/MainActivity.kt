@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.View.NoteView
 import com.mertkaragul.noteappcleanarchitecture.Presentation.RegisterPage.View.RegisterPage
 import com.mertkaragul.noteappcleanarchitecture.Presentation.UserPage.View.CheckUser
 import com.mertkaragul.noteappcleanarchitecture.Presentation.ui.theme.NoteAppCleanArchitectureTheme
@@ -34,6 +35,10 @@ class MainActivity : ComponentActivity() {
 
                         composable("registerUser"){
                             RegisterPage(rememberNavController)
+                        }
+
+                        composable("notesView"){
+                            NoteView()
                         }
                     }
                 }
