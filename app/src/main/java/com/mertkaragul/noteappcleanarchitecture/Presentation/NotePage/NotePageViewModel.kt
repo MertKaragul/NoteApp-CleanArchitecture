@@ -22,14 +22,15 @@ class NotePageViewModel @Inject constructor(
     private val _state = mutableStateOf(NoteState())
     val state : State<NoteState> = _state
 
-    fun GetNotes(){
+    private fun GetNotes(){
         notesUseCase.invoke()
             .onEach {
                 when(it){
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
                             isLoading = false,
-                            data = it.data
+                            data = it.data,
+                            error = ""
                         )
                     }
 

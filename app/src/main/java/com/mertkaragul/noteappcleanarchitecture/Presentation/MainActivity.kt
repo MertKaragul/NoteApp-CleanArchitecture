@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mertkaragul.noteappcleanarchitecture.Common.Routes
+import com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View.AddEditView
 import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.View.NoteView
-import com.mertkaragul.noteappcleanarchitecture.Presentation.RegisterPage.View.RegisterPage
-import com.mertkaragul.noteappcleanarchitecture.Presentation.UserPage.View.CheckUser
 import com.mertkaragul.noteappcleanarchitecture.Presentation.ui.theme.NoteAppCleanArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,24 +21,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NoteAppCleanArchitectureTheme {
+            NoteAppCleanArchitectureTheme(
+                darkTheme = true,
+                dynamicColor = true
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val rememberNavController = rememberNavController()
 
-                    NavHost(navController = rememberNavController, startDestination = "checkUser"){
-                        composable("checkUser"){
-                            CheckUser(rememberNavController)
+                    NavHost(navController = rememberNavController, startDestination = Routes.NOTE_PAGE.toString()){
+                        composable(Routes.NOTE_PAGE.toString()){
+                            NoteView(rememberNavController)
                         }
 
-                        composable("registerUser"){
-                            RegisterPage(rememberNavController)
-                        }
-
-                        composable("notesView"){
-                            NoteView()
+                        composable(Routes.ADD.toString()){
+                            AddEditView(rememberNavHostController = rememberNavController)
                         }
                     }
                 }

@@ -13,9 +13,11 @@ fun TextFieldWidgetOutline(
     text : String,
     textChanged : (String) -> Unit,
     placeholder:String,
+    isRequired : Boolean = false,
     errorMessage : String
 ) {
     val error : Boolean = text.isEmpty()
+
     Column {
         OutlinedTextField(
             value = text,
@@ -25,7 +27,7 @@ fun TextFieldWidgetOutline(
                     placeholder
                 )
             },
-            isError = error,
+            isError = if (!isRequired) error else false,
             colors = TextFieldDefaults.colors(
                 errorContainerColor = MaterialTheme.colorScheme.errorContainer,
                 errorTextColor = MaterialTheme.colorScheme.error,
@@ -34,7 +36,7 @@ fun TextFieldWidgetOutline(
             )
         )
 
-        if(error){
+        if(!isRequired && error){
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,

@@ -32,7 +32,7 @@ fun ImageCircleWidget(
     width : Dp,
     height : Dp,
     image : Uri?,
-    selectImage : () -> Unit
+    selectImage :() -> Unit
 ) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)

@@ -2,20 +2,16 @@ package com.mertkaragul.noteappcleanarchitecture.Data.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
+import com.google.gson.Gson
 import com.mertkaragul.noteappcleanarchitecture.Common.Constants
 import com.mertkaragul.noteappcleanarchitecture.Data.Impl.NoteImpl
-import com.mertkaragul.noteappcleanarchitecture.Data.Impl.UserImpl
-import com.mertkaragul.noteappcleanarchitecture.Data.Local.Daos.UserDao
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.Database
 import com.mertkaragul.noteappcleanarchitecture.Domain.Repo.INoteRepo
-import com.mertkaragul.noteappcleanarchitecture.Domain.Repo.IUserRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Inject
 import javax.inject.Singleton
 
 
@@ -33,11 +29,11 @@ object Di {
             .build()
     }
 
-    @Singleton
     @Provides
-    fun ProvideUserImpl(database: Database) : IUserRepo{
-        return UserImpl(database.userDao())
+    fun ProvideGson() : Gson{
+        return Gson()
     }
+
     @Singleton
     @Provides
     fun ProvideNoteImpl(database: Database) : INoteRepo {

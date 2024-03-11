@@ -1,7 +1,6 @@
 package com.mertkaragul.noteappcleanarchitecture.Domain.Repo
 
 import com.mertkaragul.noteappcleanarchitecture.Domain.Model.NoteModel
-import com.mertkaragul.noteappcleanarchitecture.Domain.Model.UserModel
 
 interface INoteRepo {
     suspend fun getAll() : List<NoteModel>
