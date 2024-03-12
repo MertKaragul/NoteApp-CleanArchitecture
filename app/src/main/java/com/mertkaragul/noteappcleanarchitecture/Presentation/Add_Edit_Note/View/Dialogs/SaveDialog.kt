@@ -34,10 +34,12 @@ import com.mertkaragul.noteappcleanarchitecture.Presentation.ui.theme.noteFontFa
 @Composable
 fun SaveDialog(
     showVisibility: Boolean,
-    showVisibilityReq : (Boolean) -> Unit
+    showVisibilityReq : (Boolean) -> Unit,
+    saveButtonClicked : () -> Unit,
+    cancelButtonClicked: () -> Unit
 ) {
     AnimatedVisibility(visible = showVisibility) {
-        BasicAlertDialog(onDismissRequest = {  showVisibilityReq(!showVisibility)  }) {
+        BasicAlertDialog(onDismissRequest = { showVisibilityReq(!showVisibility)  }) {
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(25.dp))
@@ -68,6 +70,7 @@ fun SaveDialog(
                     Button(
                         onClick = {
                             showVisibilityReq(!showVisibility)
+                            cancelButtonClicked()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xffFF0000),
@@ -88,7 +91,10 @@ fun SaveDialog(
                     }
                     Spacer(modifier = Modifier.padding(5.dp))
                     Button(
-                        onClick = {  },
+                        onClick = {
+                            showVisibilityReq(!showVisibility)
+                            saveButtonClicked()
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xff30BE71),
                             contentColor = Color.White

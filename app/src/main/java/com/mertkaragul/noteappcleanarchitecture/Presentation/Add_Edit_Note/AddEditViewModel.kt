@@ -86,7 +86,7 @@ class AddEditViewModel @Inject constructor(
             }
 
             is AddEditEvent.SaveOrEditNote -> {
-                addOrEditNode(addEditEvent.noteModelDto, addEditEvent.saveOrEdit )
+                addOrEditNode(addEditEvent.noteModelDto, addEditEvent.isEdit )
             }
         }
     }

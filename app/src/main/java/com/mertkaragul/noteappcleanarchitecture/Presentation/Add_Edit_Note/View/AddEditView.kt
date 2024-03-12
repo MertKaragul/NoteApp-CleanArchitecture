@@ -83,7 +83,6 @@ fun AddEditView(
     val state = viewModel.editModel
 
     var title by remember { mutableStateOf((state.value.data?.title ?: "")) }
-    var shortDescription by remember { mutableStateOf((state.value.data?.shortDesc ?: "")) }
     var description by remember { mutableStateOf((state.value.data?.description ?: "")) }
     var showVisibility by remember { mutableStateOf(false) }
 
@@ -184,10 +183,29 @@ fun AddEditView(
                 )
             }
 
-            SaveDialog(showVisibility = showVisibility) { status ->
-                showVisibility = status
-            }
-
+            SaveDialog(
+                showVisibility = showVisibility,
+                cancelButtonClicked = {
+                    // cancel
+                },
+                saveButtonClicked = {
+                    viewModel.onEvent(
+                        AddEditEvent.SaveOrEditNote(
+                            NoteModelDto(
+                                id = 0,
+                                title = title,
+                                shortDesc = "",
+                                description = description,
+                                image = "",
+                            ),
+                            false
+                        )
+                    )
+                },
+                showVisibilityReq = {status ->
+                    showVisibility = status
+                }
+            )
             it.calculateBottomPadding()
         }
     )

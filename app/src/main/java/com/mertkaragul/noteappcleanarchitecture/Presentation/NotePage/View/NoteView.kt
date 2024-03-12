@@ -123,7 +123,7 @@ fun NoteView(
         },
         content = {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -133,7 +133,7 @@ fun NoteView(
                     if (state.value.data.isNullOrEmpty() || state.value.data == null){
                         NoteNotFound()
                     }else{
-                        NoteListView(noteList = state.value.data!!)
+                        NoteListView(noteList = state.value.data!!,notePageViewModel)
                     }
                 }
             }
