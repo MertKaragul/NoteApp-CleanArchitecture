@@ -1,5 +1,6 @@
 package com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase
 
+import android.graphics.Color
 import com.mertkaragul.noteappcleanarchitecture.Common.Resource
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
 import com.mertkaragul.noteappcleanarchitecture.Domain.Model.toNodeModelDto
@@ -13,8 +14,8 @@ class GetNotesUseCase @Inject constructor(
 ) {
     fun invoke() = flow<Resource<List<NoteModelDto>>> {
         emit(Resource.Loading())
-        emit(Resource.Success(iNoteRepo.getAll().map { it.toNodeModelDto() }))
-        println("NOTES ::::::::: ${iNoteRepo.getAll().map { it.toNodeModelDto() }}")
+        emit(Resource.Success(
+            iNoteRepo.getAll().map { it.toNodeModelDto() }))
     }.catch {
         emit(Resource.Error(it.localizedMessage ?: "Something went wrong"))
     }

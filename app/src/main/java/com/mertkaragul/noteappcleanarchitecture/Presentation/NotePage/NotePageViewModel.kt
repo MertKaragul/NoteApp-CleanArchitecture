@@ -7,22 +7,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertkaragul.noteappcleanarchitecture.Common.Resource
 import com.mertkaragul.noteappcleanarchitecture.Data.Impl.NoteImpl
+import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
+import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.DeleteNoteUseCase
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.GetNotesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.util.PrimitiveIterator
 import javax.inject.Inject
 
 @HiltViewModel
 class NotePageViewModel @Inject constructor(
-    private val notesUseCase: GetNotesUseCase
+    private val notesUseCase: GetNotesUseCase,
+    private val delNoteUseCase : DeleteNoteUseCase
 ) : ViewModel() {
 
     private val _state = mutableStateOf(NoteState())
     val state : State<NoteState> = _state
 
-    private fun GetNotes(){
+    private fun getNotes(){
         notesUseCase.invoke()
             .onEach {
                 when(it){
@@ -50,11 +54,25 @@ class NotePageViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
+    private fun deleteNote(noteModelDto: NoteModelDto){
+        delNoteUseCase.invoke(noteModelDto).onEach {
+            when(it){
+                is Resource.Success -> {
+                    getNotes()
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 
     fun onEvent(event : NoteEvent){
         when(event){
             is NoteEvent.GetNotes -> {
-                GetNotes()
+                getNotes()
+            }
+
+            is NoteEvent.DeleteNote -> {
+                deleteNote(event.noteModelDto)
             }
         }
     }

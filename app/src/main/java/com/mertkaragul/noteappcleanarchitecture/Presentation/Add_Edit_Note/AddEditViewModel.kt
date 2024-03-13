@@ -36,7 +36,8 @@ class AddEditViewModel @Inject constructor(
                     parseJson.title,
                     parseJson.shortDesc,
                     parseJson.description,
-                    parseJson.image
+                    parseJson.image,
+                    parseJson.color
                 ),
                 isLoading = false,
                 error = "",
@@ -55,7 +56,8 @@ class AddEditViewModel @Inject constructor(
                     noteModelDto.description,
                     noteModelDto.image,
                     LocalDateTime.now().toString(),
-                    LocalDateTime.now().toString()
+                    LocalDateTime.now().toString(),
+                    noteModelDto.color
                 )
             ).onEach {
                 println(it)
@@ -69,7 +71,8 @@ class AddEditViewModel @Inject constructor(
                     noteModelDto.description,
                     noteModelDto.image,
                     LocalDateTime.now().toString(),
-                    LocalDateTime.now().toString()
+                    LocalDateTime.now().toString(),
+                    noteModelDto.color
                 )
             ).onEach {
                 println(it)

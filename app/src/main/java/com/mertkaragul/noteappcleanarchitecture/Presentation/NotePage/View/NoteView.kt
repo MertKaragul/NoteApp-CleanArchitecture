@@ -133,11 +133,17 @@ fun NoteView(
                     if (state.value.data.isNullOrEmpty() || state.value.data == null){
                         NoteNotFound()
                     }else{
-                        NoteListView(noteList = state.value.data!!,notePageViewModel)
+                        NoteListView(
+                            noteList = state.value.data!!,
+                            wantDeleteNote = { dto ->
+                                notePageViewModel.onEvent(
+                                    NoteEvent.DeleteNote(dto)
+                                )
+                            }
+                        )
                     }
                 }
             }
-            it.calculateBottomPadding()
         }
     )
 

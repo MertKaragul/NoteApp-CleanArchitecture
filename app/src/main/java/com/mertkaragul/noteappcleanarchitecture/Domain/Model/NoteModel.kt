@@ -1,5 +1,6 @@
 package com.mertkaragul.noteappcleanarchitecture.Domain.Model
 
+import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
@@ -13,9 +14,10 @@ data class NoteModel(
     val description : String,
     val image : String,
     val createTime : String,
-    val updateTime : String
+    val updateTime : String,
+    val color : Int
 )
 
 fun NoteModel.toNodeModelDto() : NoteModelDto{
-    return NoteModelDto(id, title, shortDesc, description, image)
+    return NoteModelDto(id, title, shortDesc, description, image, color)
 }
