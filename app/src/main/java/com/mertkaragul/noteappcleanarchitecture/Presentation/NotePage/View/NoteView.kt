@@ -1,7 +1,13 @@
 package com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.View
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -56,8 +63,9 @@ fun NoteView(
     notePageViewModel: NotePageViewModel = hiltViewModel()
 ) {
     val state = notePageViewModel.state
+    val width = LocalConfiguration.current.screenWidthDp
     var searchActive by remember { mutableStateOf(false) }
-    var searchText by remember {  mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,14 +80,22 @@ fun NoteView(
                 },
 
                 actions = {
+                    var searchText by remember {  mutableStateOf("") }
                     AnimatedVisibility(
                         visible = searchActive,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(10.dp),
+                        enter = slideInHorizontally { it - 100 },
+                        exit = slideOutHorizontally { it + 500 }
                         ) {
                         OutlinedTextField(
                             value = searchText,
-                            onValueChange = { searchText = it},
-                            modifier = Modifier.width(200.dp),
+                            onValueChange = {
+                                searchText = it
+                                notePageViewModel.onEvent(
+                                    NoteEvent.SearchNote(it)
+                                )
+                            },
+                            modifier = Modifier.width((width * .5).dp),
                             singleLine = true,
                             placeholder = {
                                 Text(
@@ -91,19 +107,29 @@ fun NoteView(
                                     painter = painterResource(id = R.drawable.baseline_search_24),
                                     contentDescription = ""
                                 )
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_close_24),
+                                    contentDescription = "",
+                                    modifier = Modifier.clickable {
+                                        searchActive = !searchActive
+                                    }
+                                )
                             }
                         )
                     }
-
-                    Button(
-                        onClick = {
-                              searchActive = !searchActive
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_search_24),
-                            contentDescription = ""
-                        )
+                    AnimatedVisibility(visible = !searchActive) {
+                        Button(
+                            onClick = {
+                                searchActive = !searchActive
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_search_24),
+                                contentDescription = ""
+                            )
+                        }
                     }
                 }
             )
@@ -123,7 +149,9 @@ fun NoteView(
         },
         content = {
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = it.calculateTopPadding()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -139,6 +167,9 @@ fun NoteView(
                                 notePageViewModel.onEvent(
                                     NoteEvent.DeleteNote(dto)
                                 )
+                            },
+                            noteWantEdit = {noteId ->
+                                rememberNavController.navigate("${Routes.ADD}/$noteId")
                             }
                         )
                     }

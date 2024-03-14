@@ -35,7 +35,8 @@ import com.mertkaragul.noteappcleanarchitecture.Presentation.ui.theme.noteFontFa
 @Composable
 fun NoteListView(
     noteList : List<NoteModelDto>,
-    wantDeleteNote : (NoteModelDto) -> Unit
+    wantDeleteNote : (NoteModelDto) -> Unit,
+    noteWantEdit : (Int) -> Unit
 ) {
     var longPress by remember { mutableStateOf(false) }
     var clickedNote by remember { mutableStateOf<NoteModelDto?>(null) }
@@ -51,6 +52,7 @@ fun NoteListView(
                         onClick = {
                             longPress = false
                             clickedNote = null
+                            noteWantEdit.invoke(it.id)
                         },
                         onLongClick = {
                             longPress = !longPress

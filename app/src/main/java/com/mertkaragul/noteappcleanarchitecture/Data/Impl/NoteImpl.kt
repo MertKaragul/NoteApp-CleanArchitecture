@@ -12,8 +12,12 @@ class NoteImpl @Inject constructor(
         return noteDao.getNotes()
     }
 
-    override suspend fun findUserById(id: Int): NoteModel {
+    override suspend fun findNoteById(id: Int): NoteModel {
         return noteDao.findNoteById(id)
+    }
+
+    override suspend fun findNoteByTitle(searchString: String): List<NoteModel> {
+        return noteDao.findNoteByTitle(searchString)
     }
 
     override suspend fun insert(noteModel: NoteModel) {

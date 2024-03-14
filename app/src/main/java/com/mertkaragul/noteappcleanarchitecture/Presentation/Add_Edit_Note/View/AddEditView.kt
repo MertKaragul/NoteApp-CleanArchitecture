@@ -1,17 +1,7 @@
 package com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View
 
-import android.net.Uri
-import android.widget.Space
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +15,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
@@ -50,15 +40,22 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditView(
-    jsonModel : String? = null,
+    getNoteId : Int? = null,
     rememberNavHostController: NavHostController,
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val state = viewModel.editModel
 
-    var title by remember { mutableStateOf((state.value.data?.title ?: "")) }
-    var description by remember { mutableStateOf((state.value.data?.description ?: "")) }
+
+    val title = if( state.value.data != null) remember{ mutableStateOf(state.value.data!!.title) }
+    else remember{ mutableStateOf("") }
+
+
+    val description = if(state.value.data != null) remember{ mutableStateOf(state.value.data!!.description) }
+    else remember{ mutableStateOf("") }
+
     var showVisibility by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -101,9 +98,9 @@ fun AddEditView(
                 horizontalAlignment = Alignment.Start
             ) {
                 TextField(
-                    value = title,
+                    value = title.value,
                     onValueChange = {
-                        text -> title = text
+                        text -> title.value = text
                     },
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
@@ -131,9 +128,9 @@ fun AddEditView(
                 TextField(
                     modifier = Modifier
                         .fillMaxSize(),
-                    value = description,
+                    value = description.value,
                     onValueChange = {
-                            text -> description = text
+                            text -> description.value = text
                     },
                     placeholder = {
                         Text(
@@ -168,22 +165,33 @@ fun AddEditView(
                     viewModel.onEvent(
                         AddEditEvent.SaveOrEditNote(
                             NoteModelDto(
-                                id = 0,
-                                title = title,
+                                id = state.value.data?.id ?: 0,
+                                title = title.value,
                                 shortDesc = "",
-                                description = description,
+                                description = description.value,
                                 image = "",
                                 color = color
                             ),
-                            false
+                            state.value.editMode
                         )
                     )
                 },
-                showVisibilityReq = {status ->
+                showVisibilityReq = { status ->
                     showVisibility = status
                 }
             )
-            it.calculateBottomPadding()
         }
     )
+
+    // User want to edit note ?
+    LaunchedEffect(key1 = Unit) {
+        if(getNoteId != null){
+            viewModel.onEvent(
+                AddEditEvent.GetNoteById(
+                    noteId = getNoteId
+                )
+            )
+        }
+    }
+
 }

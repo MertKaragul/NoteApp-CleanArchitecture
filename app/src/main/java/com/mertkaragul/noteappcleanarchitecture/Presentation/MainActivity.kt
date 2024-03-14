@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.mertkaragul.noteappcleanarchitecture.Common.Routes
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View.AddEditView
 import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.View.NoteView
@@ -35,9 +37,14 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.NOTE_PAGE.toString()){
                             NoteView(rememberNavController)
                         }
-
-                        composable(Routes.ADD.toString()){
-                            AddEditView(rememberNavHostController = rememberNavController)
+                        composable(
+                            "${Routes.ADD}/{noteId}",
+                            arguments = listOf(navArgument("noteId") { type = NavType.IntType })
+                        ){
+                            AddEditView(
+                                getNoteId = it.arguments?.getInt("noteId"),
+                                rememberNavHostController = rememberNavController
+                            )
                         }
                     }
                 }

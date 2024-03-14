@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.mertkaragul.noteappcleanarchitecture.Common.Resource
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
 import com.mertkaragul.noteappcleanarchitecture.Domain.Model.NoteModel
 import com.mertkaragul.noteappcleanarchitecture.Domain.Repo.INoteRepo
+import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.GetNoteByIdUseCase
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.InsertNoteUseCase
+import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.SearchNoteUseCase
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.UpdateNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -19,33 +22,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditViewModel @Inject constructor(
-    private val gson : Gson,
     private val insertNoteUseCase: InsertNoteUseCase,
-    private val updateNoteUseCase: UpdateNoteUseCase
+    private val updateNoteUseCase: UpdateNoteUseCase,
+    private val getNoteByIdUseCase: GetNoteByIdUseCase
 ) : ViewModel() {
     private val _editModel = mutableStateOf(AddEditState())
     val editModel : State<AddEditState> = _editModel
-
-
-    private fun parseJson(jsonString : String){
-        val parseJson = gson.fromJson<NoteModelDto>(jsonString,object : TypeToken<NoteModelDto>() {}.type)
-        if(parseJson != null){
-            _editModel.value = _editModel.value.copy(
-                data = NoteModelDto(
-                    parseJson.id,
-                    parseJson.title,
-                    parseJson.shortDesc,
-                    parseJson.description,
-                    parseJson.image,
-                    parseJson.color
-                ),
-                isLoading = false,
-                error = "",
-                editMode = true
-            )
-        }
-    }
-
     private fun addOrEditNode(noteModelDto: NoteModelDto, editMode : Boolean){
         if(!editMode){
             insertNoteUseCase.invoke(
@@ -80,12 +62,41 @@ class AddEditViewModel @Inject constructor(
         }
     }
 
+    private fun getNoteById(noteId : Int){
+        getNoteByIdUseCase.invoke(noteId)
+            .onEach {
+                when(it){
+                    is Resource.Loading -> {
+                        _editModel.value = _editModel.value.copy(
+                            isLoading = true,
+                            editMode = false
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        _editModel.value = _editModel.value.copy(
+                            isLoading = false,
+                            error = it.error,
+                            editMode = false
+                        )
+                    }
+                    is Resource.Success -> {
+                        _editModel.value = _editModel.value.copy(
+                            isLoading = false,
+                            data = it.data,
+                            editMode = true
+                        )
+                    }
+
+                }
+            }.launchIn(viewModelScope)
+    }
 
 
     fun onEvent(addEditEvent: AddEditEvent){
         when(addEditEvent){
-            is AddEditEvent.CheckEdit -> {
-                parseJson(addEditEvent.jsonString)
+            is AddEditEvent.GetNoteById -> {
+                getNoteById(addEditEvent.noteId)
             }
 
             is AddEditEvent.SaveOrEditNote -> {

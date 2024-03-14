@@ -14,7 +14,7 @@ interface NoteDao{
     suspend fun getNotes() : List<NoteModel>
     @Query("SELECT * FROM NoteModel WHERE id LIKE :id")
     suspend fun findNoteById(id : Int) : NoteModel
-    @Query("SELECT * FROM NoteModel WHERE title LIKE :title")
+    @Query("SELECT * FROM NoteModel WHERE title LIKE '%' || :title || '%'")
     suspend fun findNoteByTitle(title : String) : List<NoteModel>
     @Insert
     suspend fun insert(noteModel: NoteModel)
