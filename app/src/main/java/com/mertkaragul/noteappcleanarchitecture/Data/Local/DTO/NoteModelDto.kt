@@ -9,10 +9,10 @@ import java.util.Date
 data class NoteModelDto(
     val id : Int = 0,
     val title : String,
-    val shortDesc : String,
+    val shortDesc : String = "",
     val description : String,
-    val image : String,
-    val color : Int
+    val image : String = "",
+    var color : Int
 )
 
 fun NoteModelDto.toNoteModel() : NoteModel{

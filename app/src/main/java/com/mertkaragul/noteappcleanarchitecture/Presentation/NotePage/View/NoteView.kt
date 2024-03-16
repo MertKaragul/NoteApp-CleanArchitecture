@@ -50,6 +50,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.mertkaragul.noteappcleanarchitecture.Common.NoteStatus
 import com.mertkaragul.noteappcleanarchitecture.Common.Routes
 import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.NoteEvent
 import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.NotePageViewModel
@@ -65,87 +66,34 @@ fun NoteView(
     val state = notePageViewModel.state
     val width = LocalConfiguration.current.screenWidthDp
     var searchActive by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Notes",
-                        style = TextStyle(
-                            fontFamily = noteFontFamily,
-                            fontSize = 35.sp
-                        )
-                    )
+            NoteViewAppBar(
+                title = "Notes" ,
+                searchActive = searchActive ,
+                searchActiveChanged = {
+                    searchActive = !it
+                    if (!it) searchText = ""
                 },
-
-                actions = {
-                    var searchText by remember {  mutableStateOf("") }
-                    AnimatedVisibility(
-                        visible = searchActive,
-                        modifier = Modifier.padding(10.dp),
-                        enter = slideInHorizontally { it - 100 },
-                        exit = slideOutHorizontally { it + 500 }
-                        ) {
-                        OutlinedTextField(
-                            value = searchText,
-                            onValueChange = {
-                                searchText = it
-                                notePageViewModel.onEvent(
-                                    NoteEvent.SearchNote(it)
-                                )
-                            },
-                            modifier = Modifier.width((width * .5).dp),
-                            singleLine = true,
-                            placeholder = {
-                                Text(
-                                    "Search note"
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.baseline_search_24),
-                                    contentDescription = ""
-                                )
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.baseline_close_24),
-                                    contentDescription = "",
-                                    modifier = Modifier.clickable {
-                                        searchActive = !searchActive
-                                    }
-                                )
-                            }
-                        )
-                    }
-                    AnimatedVisibility(visible = !searchActive) {
-                        Button(
-                            onClick = {
-                                searchActive = !searchActive
-                            },
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_search_24),
-                                contentDescription = ""
-                            )
-                        }
-                    }
+                searchText =  searchText,
+                searchTextChanged = {
+                    searchText = it
+                    notePageViewModel.onEvent(
+                        NoteEvent.SearchNote(it)
+                    )
                 }
             )
         },
 
         floatingActionButton = {
-            FloatingActionButton(
+            NotePageFloatActions(
+                rememberNavController,
                 onClick = {
-                    rememberNavController.navigate(Routes.ADD.toString())
+                    rememberNavController.navigate("${Routes.ADD}/${NoteStatus.NEW_NOTE.ordinal}")
                 }
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.baseline_add_24) ,
-                    contentDescription = ""
-                )
-            }
+            )
         },
         content = {
             Column(
@@ -169,7 +117,7 @@ fun NoteView(
                                 )
                             },
                             noteWantEdit = {noteId ->
-                                rememberNavController.navigate("${Routes.ADD}/$noteId")
+                                rememberNavController.navigate("${Routes.ADD}/${noteId}")
                             }
                         )
                     }

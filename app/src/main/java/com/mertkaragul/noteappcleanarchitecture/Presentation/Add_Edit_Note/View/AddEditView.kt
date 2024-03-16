@@ -1,12 +1,15 @@
 package com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -29,163 +32,116 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mertkaragul.noteappcleanarchitecture.Common.NoteStatus
+import com.mertkaragul.noteappcleanarchitecture.Common.Routes
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.AddEditEvent
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.AddEditViewModel
-import com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View.Dialogs.SaveDialog
+import com.mertkaragul.noteappcleanarchitecture.Presentation.Widgets.NoteDialogButton
+import com.mertkaragul.noteappcleanarchitecture.Presentation.Widgets.NoteDialogs
 import com.mertkaragul.noteappcleanarchitecture.Presentation.ui.theme.noteFontFamily
 import com.mertkaragul.noteappcleanarchitecture.R
+import okhttp3.Route
+import java.security.KeyStore.TrustedCertificateEntry
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditView(
-    getNoteId : Int? = null,
+    getNoteId : Int = NoteStatus.NEW_NOTE.ordinal,
     rememberNavHostController: NavHostController,
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val state = viewModel.editModel
 
 
-    val title = if( state.value.data != null) remember{ mutableStateOf(state.value.data!!.title) }
+    val title = if(state.value.data != null ) remember{ mutableStateOf(state.value.data!!.title) }
     else remember{ mutableStateOf("") }
 
 
-    val description = if(state.value.data != null) remember{ mutableStateOf(state.value.data!!.description) }
+    val description = if(state.value.data != null ) remember{ mutableStateOf(state.value.data!!.description) }
     else remember{ mutableStateOf("") }
 
-    var showVisibility by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    var whichWantDo by remember { mutableStateOf(NoteStatus.SAVE_NOTE) }
 
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    Button(
-                        onClick = {
-                            rememberNavHostController.popBackStack()
-                        },
-                        shape = RoundedCornerShape(7.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                            contentDescription = "",
-                        )
-                    }
+            AddEditTopBar(
+                rememberNavHostController = rememberNavHostController,
+                savePress = {
+                    showDialog = !showDialog
+                    whichWantDo = NoteStatus.NEW_NOTE
                 },
-                actions = {
-                    Button(
-                        onClick = {
-                                  showVisibility = true
-                        },
-                        shape = RoundedCornerShape(7.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_save_24),
-                            contentDescription = ""
-                        )
-                    }
-                }
+                deletePress = {
+                    showDialog = !showDialog
+                    whichWantDo = NoteStatus.DELETE_NOTE
+                },
+                saveableNote = getNoteId != NoteStatus.NEW_NOTE.ordinal
             )
         },
         content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = it.calculateTopPadding()),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                TextField(
-                    value = title.value,
-                    onValueChange = {
-                        text -> title.value = text
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = {
-                        Text(
-                            "Title",
-                            style = TextStyle(
-                                fontFamily = noteFontFamily,
-                                fontSize = 35.sp
-                            )
-                        )
-                    },
-                    singleLine = true,
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent
-                    ),
-                    textStyle = TextStyle(
-                        fontFamily = noteFontFamily,
-                        fontSize = 35.sp
-                    )
-                )
+            AddEditContainer(
+                paddingValues = it,
+                title = title.value,
+                titleChange = {titleChanged -> title.value = titleChanged},
+                description = description.value,
+                descriptionChange = {descChanges -> description.value = descChanges}
+            )
 
-                TextField(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    value = description.value,
-                    onValueChange = {
-                            text -> description.value = text
-                    },
-                    placeholder = {
-                        Text(
-                            "Description",
-                            style = TextStyle(
-                                fontFamily = noteFontFamily,
-                                fontSize = 20.sp
-                            )
+            // Page dialog \\
+            AnimatedVisibility(visible = (showDialog)) {
+                NoteDialogs(
+                    title = if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE) "Save changes?" else "Are you sure delete note?",
+                    sendBackVisibility = { showDialog = !showDialog },
+                    buttons = {
+                        NoteDialogButton(
+                            text = "Cancel",
+                            color = Color.Red,
+                            onClicked = {
+                                showDialog = !showDialog
+                            }
                         )
-                    },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent
-                    ),
-                    textStyle = TextStyle(
-                        fontFamily = noteFontFamily,
-                        fontSize = 20.sp
-                    )
+                        Spacer(modifier = Modifier.padding(3.dp))
+                        NoteDialogButton(
+                            text = if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE) "Save" else "Delete",
+                            color = Color(0xff30BE71),
+                            onClicked = {
+                                if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE){
+                                    val rnd = Random.Default
+                                    val color: Int = android.graphics.Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                                    viewModel.onEvent(
+                                        AddEditEvent.SaveOrEditNote(
+                                            NoteModelDto(
+                                                id = state.value.data?.id ?: 0,
+                                                color = color,
+                                                title = title.value,
+                                                description = description.value,
+                                            ),
+                                            state.value.editMode
+                                        )
+                                    )
+                                }else if(whichWantDo == NoteStatus.DELETE_NOTE){
+                                    if (state.value.data != null){
+                                        viewModel.onEvent(
+                                            AddEditEvent.DeleteNote(state.value.data!!)
+                                        )
+                                    }
+                                }
+                                showDialog = !showDialog
+                                rememberNavHostController.navigate(Routes.NOTE_PAGE.toString())
+                            }
+                        )
+                    }
                 )
             }
-
-            SaveDialog(
-                showVisibility = showVisibility,
-                cancelButtonClicked = {
-                    // cancel
-                },
-                saveButtonClicked = {
-                    val rnd = Random.Default
-                    val color: Int = android.graphics.Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                    viewModel.onEvent(
-                        AddEditEvent.SaveOrEditNote(
-                            NoteModelDto(
-                                id = state.value.data?.id ?: 0,
-                                title = title.value,
-                                shortDesc = "",
-                                description = description.value,
-                                image = "",
-                                color = color
-                            ),
-                            state.value.editMode
-                        )
-                    )
-                },
-                showVisibilityReq = { status ->
-                    showVisibility = status
-                }
-            )
         }
     )
 
     // User want to edit note ?
     LaunchedEffect(key1 = Unit) {
-        if(getNoteId != null){
+        if(getNoteId != NoteStatus.NEW_NOTE.ordinal){
             viewModel.onEvent(
                 AddEditEvent.GetNoteById(
                     noteId = getNoteId
@@ -193,5 +149,4 @@ fun AddEditView(
             )
         }
     }
-
 }

@@ -10,6 +10,7 @@ import com.mertkaragul.noteappcleanarchitecture.Common.Resource
 import com.mertkaragul.noteappcleanarchitecture.Data.Local.DTO.NoteModelDto
 import com.mertkaragul.noteappcleanarchitecture.Domain.Model.NoteModel
 import com.mertkaragul.noteappcleanarchitecture.Domain.Repo.INoteRepo
+import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.DeleteNoteUseCase
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.GetNoteByIdUseCase
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.InsertNoteUseCase
 import com.mertkaragul.noteappcleanarchitecture.Domain.UseCase.NotesUseCase.SearchNoteUseCase
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class AddEditViewModel @Inject constructor(
     private val insertNoteUseCase: InsertNoteUseCase,
     private val updateNoteUseCase: UpdateNoteUseCase,
-    private val getNoteByIdUseCase: GetNoteByIdUseCase
+    private val getNoteByIdUseCase: GetNoteByIdUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase
 ) : ViewModel() {
     private val _editModel = mutableStateOf(AddEditState())
     val editModel : State<AddEditState> = _editModel
@@ -92,6 +94,13 @@ class AddEditViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
+    private fun deleteNote(noteModelDto: NoteModelDto){
+        deleteNoteUseCase.invoke(noteModelDto)
+            .onEach {
+                println(it)
+            }.launchIn(viewModelScope)
+    }
+
 
     fun onEvent(addEditEvent: AddEditEvent){
         when(addEditEvent){
@@ -101,6 +110,10 @@ class AddEditViewModel @Inject constructor(
 
             is AddEditEvent.SaveOrEditNote -> {
                 addOrEditNode(addEditEvent.noteModelDto, addEditEvent.isEdit )
+            }
+
+            is AddEditEvent.DeleteNote -> {
+                deleteNote(addEditEvent.noteModelDto)
             }
         }
     }

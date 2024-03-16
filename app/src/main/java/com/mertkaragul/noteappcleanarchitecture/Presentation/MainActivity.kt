@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.mertkaragul.noteappcleanarchitecture.Common.NoteStatus
 import com.mertkaragul.noteappcleanarchitecture.Common.Routes
 import com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View.AddEditView
 import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.View.NoteView
@@ -33,16 +34,21 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val rememberNavController = rememberNavController()
 
-                    NavHost(navController = rememberNavController, startDestination = Routes.NOTE_PAGE.toString()){
+                    NavHost(navController = rememberNavController,
+                        startDestination = Routes.NOTE_PAGE.toString()){
+
                         composable(Routes.NOTE_PAGE.toString()){
                             NoteView(rememberNavController)
                         }
+
                         composable(
                             "${Routes.ADD}/{noteId}",
-                            arguments = listOf(navArgument("noteId") { type = NavType.IntType })
+                            arguments = listOf(navArgument("noteId") {
+                                type = NavType.IntType
+                            })
                         ){
                             AddEditView(
-                                getNoteId = it.arguments?.getInt("noteId"),
+                                getNoteId = it.arguments?.getInt("noteId") ?: NoteStatus.NEW_NOTE.ordinal,
                                 rememberNavHostController = rememberNavController
                             )
                         }
