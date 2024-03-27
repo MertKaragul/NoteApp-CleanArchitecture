@@ -96,43 +96,42 @@ fun AddEditView(
                     title = if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE) "Save changes?" else "Are you sure delete note?",
                     sendBackVisibility = { showDialog = !showDialog },
                     buttons = {
-                        NoteDialogButton(
-                            text = "Cancel",
-                            color = Color.Red,
-                            onClicked = {
-                                showDialog = !showDialog
-                            }
-                        )
+                        Button(onClick = { showDialog = !showDialog }) {
+                            Text("Cancel")
+                        }
                         Spacer(modifier = Modifier.padding(3.dp))
-                        NoteDialogButton(
-                            text = if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE) "Save" else "Delete",
-                            color = Color(0xff30BE71),
-                            onClicked = {
-                                if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE){
-                                    val rnd = Random.Default
-                                    val color: Int = android.graphics.Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-                                    viewModel.onEvent(
-                                        AddEditEvent.SaveOrEditNote(
-                                            NoteModelDto(
-                                                id = state.value.data?.id ?: 0,
-                                                color = color,
-                                                title = title.value,
-                                                description = description.value,
-                                            ),
-                                            state.value.editMode
-                                        )
+
+                        Button(onClick = {
+                            if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE){
+                                val rnd = Random.Default
+                                val color: Int = android.graphics.Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+                                viewModel.onEvent(
+                                    AddEditEvent.SaveOrEditNote(
+                                        NoteModelDto(
+                                            id = state.value.data?.id ?: 0,
+                                            color = color,
+                                            title = title.value,
+                                            description = description.value,
+                                        ),
+                                        state.value.editMode
                                     )
-                                }else if(whichWantDo == NoteStatus.DELETE_NOTE){
-                                    if (state.value.data != null){
-                                        viewModel.onEvent(
-                                            AddEditEvent.DeleteNote(state.value.data!!)
-                                        )
-                                    }
+                                )
+                            }else if(whichWantDo == NoteStatus.DELETE_NOTE){
+                                if (state.value.data != null){
+                                    viewModel.onEvent(
+                                        AddEditEvent.DeleteNote(state.value.data!!)
+                                    )
                                 }
-                                showDialog = !showDialog
-                                rememberNavHostController.navigate(Routes.NOTE_PAGE.toString())
                             }
-                        )
+                            showDialog = !showDialog
+                            rememberNavHostController.navigate(Routes.NOTE_PAGE.toString())
+                        }) {
+                            Text(
+                                text = if(whichWantDo == NoteStatus.SAVE_NOTE || whichWantDo == NoteStatus.NEW_NOTE)
+                                    "Save" else
+                                        "Delete",
+                            )
+                        }
                     }
                 )
             }

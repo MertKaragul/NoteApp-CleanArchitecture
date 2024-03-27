@@ -57,14 +57,12 @@ import com.mertkaragul.noteappcleanarchitecture.Presentation.NotePage.NotePageVi
 import com.mertkaragul.noteappcleanarchitecture.Presentation.ui.theme.noteFontFamily
 import com.mertkaragul.noteappcleanarchitecture.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteView(
     rememberNavController: NavHostController,
     notePageViewModel: NotePageViewModel = hiltViewModel()
 ) {
     val state = notePageViewModel.state
-    val width = LocalConfiguration.current.screenWidthDp
     var searchActive by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
@@ -72,24 +70,25 @@ fun NoteView(
         topBar = {
             NoteViewAppBar(
                 title = "Notes" ,
-                searchActive = searchActive ,
+                searchActive = searchActive,
                 searchActiveChanged = {
                     searchActive = !it
-                    if (!it) searchText = ""
+                    if (!it) {
+                        searchText = ""
+                    }
                 },
-                searchText =  searchText,
+                searchText = searchText,
                 searchTextChanged = {
                     searchText = it
                     notePageViewModel.onEvent(
                         NoteEvent.SearchNote(it)
                     )
-                }
+                },
             )
         },
 
         floatingActionButton = {
             NotePageFloatActions(
-                rememberNavController,
                 onClick = {
                     rememberNavController.navigate("${Routes.ADD}/${NoteStatus.NEW_NOTE.ordinal}")
                 }
@@ -126,7 +125,7 @@ fun NoteView(
         }
     )
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = searchActive) {
         notePageViewModel.onEvent(NoteEvent.GetNotes)
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -83,24 +84,22 @@ fun NoteListView(
             title = "Are you sure want delete note?",
             sendBackVisibility = {longPress = it},
             buttons = {
-                NoteDialogButton(
-                    text = "Cancel",
-                    color = Color.Red,
-                    onClicked = {
-                        longPress = false
-                        clickedNote = null
-                    }
-                )
+                Button(onClick = {
+                    longPress = false
+                    clickedNote = null
+                }) {
+                    Text("Cancel")
+                }
+
                 Spacer(modifier = Modifier.padding(3.dp))
-                NoteDialogButton(
-                    text = "Delete",
-                    color = Color(0xff30BE71),
-                    onClicked = {
-                        if(clickedNote != null){
-                            wantDeleteNote(clickedNote!!)
-                        }
+
+                Button(onClick = {
+                    if(clickedNote != null){
+                        wantDeleteNote(clickedNote!!)
                     }
-                )
+                }) {
+                    Text("Delete")
+                }
             }
         )
     }

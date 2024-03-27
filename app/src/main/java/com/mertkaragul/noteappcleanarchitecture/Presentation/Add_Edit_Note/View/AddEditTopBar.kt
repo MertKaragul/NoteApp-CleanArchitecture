@@ -7,6 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -36,7 +37,7 @@ fun AddEditTopBar(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                    contentDescription = "",
+                    contentDescription = "Back to main page",
                 )
             }
         },
@@ -47,7 +48,7 @@ fun AddEditTopBar(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_save_24),
-                    contentDescription = ""
+                    contentDescription = "Save or update note"
                 )
             }
 
@@ -55,8 +56,8 @@ fun AddEditTopBar(
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red.copy(0.6F),
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.error
                     ),
 
                     onClick = deletePress,
@@ -64,7 +65,7 @@ fun AddEditTopBar(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_delete_24),
-                        contentDescription = ""
+                        contentDescription = "Delete note"
                     )
                 }
             }

@@ -25,7 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NoteAppCleanArchitectureTheme(
-                darkTheme = true,
                 dynamicColor = true
             ) {
                 Surface(

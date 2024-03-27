@@ -37,7 +37,6 @@ fun NoteViewAppBar(
     searchTextChanged : (String) -> Unit
 ) {
     val width = LocalConfiguration.current.screenWidthDp
-    val height = LocalConfiguration.current.screenHeightDp
     return TopAppBar(
         title = {
             Text(
@@ -69,13 +68,16 @@ fun NoteViewAppBar(
                     leadingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_search_24),
-                            contentDescription = ""
+                            contentDescription = "Close search note",
+                            modifier = Modifier.clickable {
+                                searchActiveChanged(searchActive)
+                            }
                         )
                     },
                     trailingIcon = {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_close_24),
-                            contentDescription = "",
+                            contentDescription = "Click and start search note",
                             modifier = Modifier.clickable {
                                 searchActiveChanged(searchActive)
                             }

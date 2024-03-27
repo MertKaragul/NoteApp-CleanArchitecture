@@ -1,11 +1,13 @@
 package com.mertkaragul.noteappcleanarchitecture.Presentation.Add_Edit_Note.View
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -35,23 +37,26 @@ fun AddEditContainer(
         TextField(
             value = title,
             onValueChange = titleChange,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             placeholder = {
                 Text(
                     "Title",
                     style = TextStyle(
                         fontFamily = noteFontFamily,
                         fontSize = 35.sp
-                    )
+                    ),
                 )
             },
             singleLine = true,
+            /*
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
+                focusedIndicatorColor = Color.Transparent,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary
+            ),*/
             textStyle = TextStyle(
                 fontFamily = noteFontFamily,
                 fontSize = 35.sp
@@ -69,15 +74,17 @@ fun AddEditContainer(
                     style = TextStyle(
                         fontFamily = noteFontFamily,
                         fontSize = 20.sp
-                    )
+                    ),
                 )
             },
+            /*
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
-            ),
+                focusedIndicatorColor = Color.Transparent,
+                focusedTextColor = MaterialTheme.colorScheme.onPrimary
+            ),*/
             textStyle = TextStyle(
                 fontFamily = noteFontFamily,
                 fontSize = 20.sp

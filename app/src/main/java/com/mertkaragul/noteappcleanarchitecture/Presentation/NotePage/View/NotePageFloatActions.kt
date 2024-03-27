@@ -11,7 +11,6 @@ import com.mertkaragul.noteappcleanarchitecture.R
 
 @Composable
 fun NotePageFloatActions(
-    rememberNavHostController: NavHostController,
     onClick : () -> Unit
 ) {
     FloatingActionButton(
@@ -19,7 +18,7 @@ fun NotePageFloatActions(
     ) {
         Icon(
             painter = painterResource(R.drawable.baseline_add_24) ,
-            contentDescription = ""
+            contentDescription = "Add note"
         )
     }
 }
